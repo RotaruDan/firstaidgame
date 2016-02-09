@@ -7,18 +7,45 @@ using UnityEngine.UI;
 public class PlayVideo : MonoBehaviour
 {
 
-    public MovieTexture movie;
+    private MovieTexture movie;
 
     // Use this for initialization
     void Start()
     {
-        GetComponent<RawImage>().texture = movie as MovieTexture;
-        movie.Play();
+        HideMovie();
+    }
+
+    void HideMovie()
+    {
+        this.gameObject.SetActive(false);
+        movie = null;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (movie != null && !movie.isPlaying && this.gameObject.activeSelf)
+        {
+            HideMovie();
+        }
+    }
+    
+    public void OnMouseDown()
+    {
+        Debug.Log("Mouse Down");
+        if (movie != null && movie.isPlaying)
+        {
+            movie.Stop();
+        }
+        HideMovie();
+    }
 
+    public void playVideo(MovieTexture texture)
+    {
+        this.movie = texture;
+        this.gameObject.SetActive(true);
+        GetComponent<RawImage>().texture = movie as MovieTexture;
+        movie.Stop();
+        movie.Play();
     }
 }
