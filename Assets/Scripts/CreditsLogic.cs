@@ -27,7 +27,7 @@ public class CreditsLogic : MonoBehaviour
             Sprite sprite = image.overrideSprite;
             if (sprite != null && sprite.name == "Creditos_02")
             {
-                SceneManager.LoadScene("Final"); // TODO change to Main Menu
+                SceneManager.LoadScene("Inicio"); // TODO change to Main Menu
             }
         }
     }
