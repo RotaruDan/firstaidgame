@@ -3,11 +3,15 @@ using UnityEngine.SceneManagement;
 
 public class Utils : MonoBehaviour
 {
+    public static PT_XMLReader XML_READER;
 
     // Use this for initialization
     void Start()
     {
-
+        if(XML_READER == null)
+        {
+            XML_READER = new PT_XMLReader();
+        }
     }
 
     // Update is called once per frame
