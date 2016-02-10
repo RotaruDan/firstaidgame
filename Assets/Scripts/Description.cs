@@ -6,12 +6,14 @@ using UnityEngine.UI;
 public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject tooltipPrefab;
+    public TextAsset xmlDescription;
 
     private Canvas canvas;
     private Camera cam;
     private RectTransform rectTransform;
     private GameObject tooltipObject;
     private Text text;
+    private string description;
 
     private Vector3 position, scale;
 
@@ -23,6 +25,17 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         position = new Vector3();
         scale = new Vector3();
+
+        string textDescription = xmlDescription.text;
+        ReadDescription(textDescription);
+    }
+
+    void ReadDescription(string text)
+    {
+        PT_XMLReader xmlr = Utils.XML_READER;
+        xmlr.Parse(text);
+
+        description = xmlr.xml["description"][0]["name"][0].text;
     }
 
     // Update is called once per frame
@@ -36,7 +49,6 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
             position.Set(pos.x, pos.y + 0.05f, 1);
             tooltipObject.transform.position = position;
-            // Debug.Log(pos.x + " " + pos.y);
         }
     }
 
@@ -48,7 +60,7 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             tooltipObject.transform.SetParent(this.gameObject.transform);
             rectTransform = tooltipObject.GetComponent<RectTransform>();
             text = tooltipObject.GetComponent<Text>();
-            text.text = "Ta-dahdfhgdfhghjfghjfghjfghjgfhjfdfh dfhgdfh gdfh gdfh gdfhg!";
+            text.text = description;
             Debug.Log("OnPointerEnter");
         }
     }
