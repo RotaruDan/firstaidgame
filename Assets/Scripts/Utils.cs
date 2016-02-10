@@ -20,4 +20,19 @@ public class Utils : MonoBehaviour
     {
         SceneManager.LoadScene(scene);
     }
+
+    public void ReiniciarFlags()
+    {
+        Flags.Reininciar();
+    }
+
+    public void ActivateFlag(string flag)
+    {
+        Flags.Agregar(flag, true);
+    }
+
+    public void DeactivateFlag(string flag)
+    {
+        Flags.Agregar(flag, false);
+    }
 }
