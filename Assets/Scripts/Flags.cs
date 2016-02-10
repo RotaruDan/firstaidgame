@@ -6,7 +6,7 @@ using System;
 public static class Flags
 {
 
-    private static Dictionary<string, Boolean> flags = new Dictionary<string, bool>();
+    private static Dictionary<string, int> flags = new Dictionary<string, int>();
 
     public static void Reininciar()
     {
@@ -30,7 +30,7 @@ public static class Flags
         Agregar("Respira", false);
         Agregar("Sentado", false);
         Agregar("TelEscondido", false);
-        Agregar("VieneAmbulancia", false);        
+        Agregar("VieneAmbulancia", false);
     }
 
 
@@ -43,18 +43,35 @@ public static class Flags
 
     public static bool ValorDe(string flag)
     {
-        Boolean temp = false;
+        int temp = 0;
         if (flags.TryGetValue(flag, out temp))
         {
-            return temp;
+            return temp == -1 ? true : false;
         }
         else {
             return false;
         }
     }
 
+    public static int ValorDeInt(string flag)
+    {
+        int temp = 0;
+        if (flags.TryGetValue(flag, out temp))
+        {
+            return temp;
+        }
+        else {
+            return 0;
+        }
+    }
+
     public static void Agregar(string flag, bool valor)
     {
-        flags.Add(flag, valor);
+        flags[flag] = valor ? -1 : 0;
+    }
+
+    public static void Agregar(string flag, int valor)
+    {
+        flags[flag] = valor;
     }
 }

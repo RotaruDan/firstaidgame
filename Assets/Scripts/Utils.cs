@@ -16,14 +16,28 @@ public class Utils : MonoBehaviour
 
     }
 
+    /**
+        SCENE
+    */
+
     public void LoadScene(string scene)
     {
         SceneManager.LoadScene(scene);
     }
 
+
+    /**
+        FLAGS
+    */
+
     public void ReiniciarFlags()
     {
         Flags.Reininciar();
+    }
+
+    public void IniciarAleatoriedadFlags()
+    {
+        Flags.IniciarAleatoriedad();
     }
 
     public void ActivateFlag(string flag)
@@ -35,4 +49,32 @@ public class Utils : MonoBehaviour
     {
         Flags.Agregar(flag, false);
     }
+
+    /**
+      Comma Separated Values - in order to be passed from the UI Event Trigger System.
+    */
+    public void SetFlag(string flagAndValueCSV)
+    {
+        string[] values = flagAndValueCSV.Split(',');
+        if (values.Length == 2)
+        {
+            Flags.Agregar(values[0], IntParseFast(values[1]));
+        }
+    }
+
+    /**
+        OTHER PRIVATE UTILITIES
+    */
+
+    private int IntParseFast(string value)
+    {
+        int result = 0;
+        for (int i = 0; i < value.Length; i++)
+        {
+            char letter = value[i];
+            result = 10 * result + (letter - 48);
+        }
+        return result;
+    }
+
 }
