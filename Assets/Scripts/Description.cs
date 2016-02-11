@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    public Texture2D actionCursor;
     public GameObject tooltipPrefab;
     public TextAsset xmlDescription;
 
     private Canvas canvas;
     private Camera cam;
-    private RectTransform rectTransform;
     private GameObject tooltipObject;
     private Text text;
     private string description;
@@ -32,7 +32,7 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     void ReadDescription(string text)
     {
-        PT_XMLReader xmlr = Utils.XML_READER;
+        PT_XMLReader xmlr = Utils.GetXMLReader();
         xmlr.Parse(text);
 
         description = xmlr.xml["description"][0]["name"][0].text;
@@ -43,10 +43,10 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         if (tooltipObject != null)
         {
-            Vector2 pos = TransformUtils.CalculatePositionFromMouseToRectTransform(canvas, cam);
             scale.Set(1, 1, 1);
             tooltipObject.transform.localScale = scale;
 
+            Vector2 pos = TransformUtils.CalculatePositionFromMouseToRectTransform(canvas, cam);
             position.Set(pos.x, pos.y + 0.05f, 1);
             tooltipObject.transform.position = position;
         }
@@ -58,10 +58,12 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             tooltipObject = Instantiate(tooltipPrefab);
             tooltipObject.transform.SetParent(this.gameObject.transform);
-            rectTransform = tooltipObject.GetComponent<RectTransform>();
             text = tooltipObject.GetComponent<Text>();
             text.text = description;
-            Debug.Log("OnPointerEnter");
+        }
+        if(this.actionCursor != null)
+        {
+            Cursor.SetCursor(actionCursor, Vector2.zero, CursorMode.Auto);
         }
     }
 
@@ -69,7 +71,7 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         Destroy(tooltipObject);
         tooltipObject = null;
-        Debug.Log("OnPointerExit");
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
 }
