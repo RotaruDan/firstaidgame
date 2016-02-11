@@ -31,6 +31,21 @@ public class TelephoneLogic : MonoBehaviour
         {
             sourceImage = telefonoEspera;
         }
+
+        bool telEscondido = Flags.ValorDe("TelEscondido");
+        Vector3 scale = this.gameObject.transform.localScale;
+        if(telEscondido)
+        {
+            if(scale.x == 1f)
+            {
+                scale.x = 0f;
+                this.gameObject.transform.localScale = scale;
+            }
+        } else if(scale.x == 0f)
+        {
+            scale.x = 1f;
+            this.gameObject.transform.localScale = scale;
+        }
     }
 
     public void OnClick()
