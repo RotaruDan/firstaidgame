@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b9822e0a5dfe2084581dc0c7d007be2a
+timeCreated: 1455189246
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - actionCursor: {fileID: 2800000, guid: 1580ebdb6b0822f43af87d26359e78e1, type: 3}
+  - tooltipPrefab: {fileID: 183212, guid: b2f813d41f939fb4080d1741a9e1444f, type: 2}
+  - xmlDescription: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -6,6 +6,7 @@ using System;
 public static class Flags
 {
 
+    public static bool atragantamientoTosNoHaIniciado = false;
     private static Dictionary<string, int> flags = new Dictionary<string, int>();
 
     public static void Reininciar()

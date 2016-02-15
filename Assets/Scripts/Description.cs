@@ -17,6 +17,11 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     private Vector3 position, scale;
 
+    public void SetDescription(string desc)
+    {
+        this.description = desc;
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -26,16 +31,19 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         position = new Vector3();
         scale = new Vector3();
 
-        string textDescription = xmlDescription.text;
+        string textDescription = xmlDescription == null ? null : xmlDescription.text;
         ReadDescription(textDescription);
     }
 
     void ReadDescription(string text)
     {
-        PT_XMLReader xmlr = Utils.GetXMLReader();
-        xmlr.Parse(text);
+        if (text != null)
+        {
+            PT_XMLReader xmlr = Utils.GetXMLReader();
+            xmlr.Parse(text);
 
-        description = xmlr.xml["description"][0]["name"][0].text;
+            description = xmlr.xml["description"][0]["name"][0].text;
+        }
     }
 
     // Update is called once per frame
@@ -54,6 +62,10 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (tooltipPrefab == null)
+        {
+            tooltipPrefab = Resources.Load<GameObject>("Prefabs/Tooltip Text");
+        }
         if (this.tooltipPrefab != null)
         {
             tooltipObject = Instantiate(tooltipPrefab);
@@ -61,7 +73,12 @@ public class Description : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             text = tooltipObject.GetComponent<Text>();
             text.text = description;
         }
-        if(this.actionCursor != null)
+
+        if (actionCursor == null)
+        {
+            actionCursor = Resources.Load<Texture2D>("gui/cursors/action_cursor");
+        }
+        if (this.actionCursor != null)
         {
             Cursor.SetCursor(actionCursor, Vector2.zero, CursorMode.Auto);
         }

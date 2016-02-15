@@ -6,19 +6,23 @@ using UnityEngine.UI;
 
 public class PlayVideo : MonoBehaviour
 {
-
+    public UnityEngine.Events.UnityAction videoEnded;
     private MovieTexture movie;
 
     // Use this for initialization
     void Start()
     {
-        HideMovie();
     }
 
     void HideMovie()
     {
         this.gameObject.SetActive(false);
+        Destroy(this.gameObject);
         movie = null;
+        if (videoEnded != null)
+        {
+            videoEnded();
+        }
     }
 
     // Update is called once per frame
@@ -32,7 +36,6 @@ public class PlayVideo : MonoBehaviour
     
     public void OnMouseDown()
     {
-        Debug.Log("Mouse Down");
         if (movie != null && movie.isPlaying)
         {
             movie.Stop();
