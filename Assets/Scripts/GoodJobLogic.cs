@@ -12,9 +12,12 @@ public class GoodJobLogic : MonoBehaviour {
                 if(Flags.ValorDe("DT"))
                 {
                     Utils.LoadLevel("ResumenDT");
-                } else
+                } else if(Flags.ValorDe("INC"))
                 {
                     Utils.LoadLevel("ResumenINC");
+                } else
+                {
+                    Utils.LoadLevel("ResumenAT");
                 }
             });
 	}
