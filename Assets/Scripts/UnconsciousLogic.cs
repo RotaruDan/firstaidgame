@@ -2,9 +2,9 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class ChestPainLogic : MonoBehaviour
+public class UnconsciousLogic : MonoBehaviour
 {
-    public Sprite dolorToracico, sentado, inconsciente;
+    public Sprite sinDesfibrilador, conDesfibrilador, posicionLateral;
     public TextAsset unconsciousPatient;
 
     private Image backgroundImage;
@@ -17,13 +17,12 @@ public class ChestPainLogic : MonoBehaviour
         Utils.LoadPhonePrefab(this.gameObject.transform);
 
         backgroundImage = this.gameObject.transform.Find("Background").GetComponent<Image>();
-        backgroundImage.sprite = dolorToracico;
-        backgroundImage.overrideSprite = dolorToracico;
+        backgroundImage.sprite = sinDesfibrilador;
+        backgroundImage.overrideSprite = sinDesfibrilador;
 
         if (Flags.ValorDe("Estimulado"))
         {
-            Conversations.PlayConversation("esperarAmbulanciaSentado");
-            Invoke("inconsciencia", 3f);
+            Conversations.PlayConversation("estimuloNoFunciona");
         }
         else
         {
@@ -33,7 +32,7 @@ public class ChestPainLogic : MonoBehaviour
 
     public void startInitialConversation()
     {
-        Conversations.PlayConversation("inicioConvoDt");
+        Conversations.PlayConversation("inicioConvoInc");
     }
 
     public void inconsciencia()
@@ -51,33 +50,30 @@ public class ChestPainLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        bool sentado = Flags.ValorDe("Sentado");
-        if (!sentado)
+
+        bool desfiColocado = Flags.ValorDe("DesfibriladorColocado");
+        bool posicionDeSeguridad = Flags.ValorDe("PosicionDeSeguridad");
+
+        if (!desfiColocado && !posicionDeSeguridad)
         {
-            if (backgroundImage.overrideSprite != dolorToracico)
+            if (backgroundImage.overrideSprite != sinDesfibrilador)
             {
-                backgroundImage.overrideSprite = this.dolorToracico;
+                backgroundImage.overrideSprite = sinDesfibrilador;
+            }
+        }
+        else if (desfiColocado)
+        {
+            if (backgroundImage.overrideSprite != conDesfibrilador)
+            {
+                backgroundImage.overrideSprite = conDesfibrilador;
             }
         }
         else
         {
-            bool inc = Flags.ValorDe("INC");
-
-            if (!inc)
+            if (backgroundImage.overrideSprite != posicionLateral)
             {
-                if (backgroundImage.overrideSprite != this.sentado)
-                {
-                    backgroundImage.overrideSprite = this.sentado;
-                }
+                backgroundImage.overrideSprite = posicionLateral;
             }
-            else
-            {
-                if (backgroundImage.overrideSprite != inconsciente)
-                {
-                    backgroundImage.overrideSprite = this.inconsciente;
-                }
-            }
-
         }
 
     }

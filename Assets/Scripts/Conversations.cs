@@ -290,8 +290,6 @@ public static class Conversations
 
     private static XmlDocument xmld;
 
-    private static Dictionary<string, string> conversations = new Dictionary<string, string>();
-
     private static void Init()
     {
         TextAsset convXml = Resources.Load<TextAsset>("conversations.xml");
@@ -380,7 +378,6 @@ public static class Conversations
                         XmlNode effect = speakNode.SelectSingleNode("effect");
                         if (effect != null)
                         {
-                            EndConvEffect endConvEffModel = new EndConvEffect();
                             XmlNodeList effectsList = effect.SelectNodes("*");
 
                             dialogNodeModel.effects = new EndConvEffect[
@@ -620,22 +617,5 @@ public static class Conversations
             convModel.nodes[i] = nodeModel;
         }
         convModel.exec();
-    }
-
-    public static string ValorDeInt(string flag)
-    {
-        string temp = "";
-        if (conversations.TryGetValue(flag, out temp))
-        {
-            return temp;
-        }
-        else {
-            return "";
-        }
-    }
-
-    public static void Agregar(string flag, int valor)
-    {
-        //flags[flag] = valor;
     }
 }
