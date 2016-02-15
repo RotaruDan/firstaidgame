@@ -178,8 +178,10 @@ public class Utils : MonoBehaviour
         textBubble.GetComponentInChildren<Text>().text = text;
         if (isPhone)
         {
-            textBubble.transform.Find("Text Bubble panel").transform.localPosition =
+            GameObject bubblePanel = textBubble.transform.Find("Text Bubble panel").gameObject;
+            bubblePanel.transform.localPosition =
                 new Vector3(240, -40, 0f);
+            bubblePanel.GetComponentInChildren<Text>().color = new Color(0.45f, 0.45f, 0.45f, 1f);
         }
         if (bubbleEnded != null)
         {

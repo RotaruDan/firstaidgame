@@ -450,14 +450,14 @@ public static class Conversations
                                 {
                                     Condition conditionModel = new Condition();
 
-                                    XmlNodeList activesList = speakNode.SelectNodes("active");
+                                    XmlNodeList activesList = effectNode.SelectNodes("active");
                                     conditionModel.actives = new string[activesList.Count];
                                     for (int y = 0; y < activesList.Count; y++)
                                     {
                                         conditionModel.actives[y] = activesList[y].Attributes["flag"].Value;
                                     }
 
-                                    XmlNodeList inactivesList = speakNode.SelectNodes("inactive");
+                                    XmlNodeList inactivesList = effectNode.SelectNodes("inactive");
                                     conditionModel.inactives = new string[inactivesList.Count];
                                     for (int y = 0; y < inactivesList.Count; y++)
                                     {
@@ -469,6 +469,96 @@ public static class Conversations
                             }
 
                         }
+                    }
+                    else if (speakName == "effect")
+                    {
+                        XmlNodeList effectsList = speakNode.SelectNodes("*");
+
+                        dialogNodeModel.effects = new EndConvEffect[
+                            effectsList.Count - speakNode.SelectNodes("condition").Count];
+                        int m = 0;
+                        for (int x = 0; x < effectsList.Count; ++x)
+                        {
+                            XmlNode effectNode = effectsList[x];
+
+                            string effectNodeName = effectNode.Name;
+                            if (effectNodeName == "activate")
+                            {
+                                ActivateFlagEffect activateFlageffect = new ActivateFlagEffect();
+                                activateFlageffect.flag = effectNode.Attributes["flag"].Value;
+                                dialogNodeModel.effects[m] = activateFlageffect;
+                                ++m;
+                            }
+                            else if (effectNodeName == "deactivate")
+                            {
+                                DeactivateFlagEffect deactivateFlageffect = new DeactivateFlagEffect();
+                                deactivateFlageffect.flag = effectNode.Attributes["flag"].Value;
+                                dialogNodeModel.effects[m] = deactivateFlageffect;
+                                ++m;
+                            }
+                            else if (effectNodeName == "increment")
+                            {
+                                IncrementFlagEffect eff = new IncrementFlagEffect();
+                                eff.val = Utils.IntParseFast(
+                                    effectNode.Attributes["value"].Value);
+                                eff.var = effectNode.Attributes["var"].Value;
+                                dialogNodeModel.effects[m] = eff;
+                                ++m;
+                            }
+                            else if (effectNodeName == "decrement")
+                            {
+                                DecrementFlagEffect eff = new DecrementFlagEffect();
+                                eff.val = Utils.IntParseFast(
+                                    effectNode.Attributes["value"].Value);
+                                eff.var = effectNode.Attributes["var"].Value;
+                                dialogNodeModel.effects[m] = eff;
+                                ++m;
+
+                            }
+                            else if (effectNodeName == "trigger-conversation")
+                            {
+                                TriggerConvEffect eff = new TriggerConvEffect();
+                                eff.idTarget = effectNode.Attributes["idTarget"].Value;
+                                dialogNodeModel.effects[m] = eff;
+                                ++m;
+                            }
+                            else if (effectNodeName == "trigger-scene")
+                            {
+                                TriggerSceneEffect eff = new TriggerSceneEffect();
+                                eff.idTarget = effectNode.Attributes["idTarget"].Value;
+                                dialogNodeModel.effects[m] = eff;
+                                ++m;
+                            }
+                            else if (effectNodeName == "trigger-cutscene")
+                            {
+                                TriggerCutSceneEffect eff = new TriggerCutSceneEffect();
+                                eff.idTarget = effectNode.Attributes["idTarget"].Value;
+                                dialogNodeModel.effects[m] = eff;
+                                ++m;
+
+                            }
+                            else if (effectNodeName == "condition")
+                            {
+                                Condition conditionModel = new Condition();
+
+                                XmlNodeList activesList = effectNode.SelectNodes("active");
+                                conditionModel.actives = new string[activesList.Count];
+                                for (int y = 0; y < activesList.Count; y++)
+                                {
+                                    conditionModel.actives[y] = activesList[y].Attributes["flag"].Value;
+                                }
+
+                                XmlNodeList inactivesList = effectNode.SelectNodes("inactive");
+                                conditionModel.inactives = new string[inactivesList.Count];
+                                for (int y = 0; y < inactivesList.Count; y++)
+                                {
+                                    conditionModel.inactives[y] = inactivesList[y].Attributes["flag"].Value;
+                                }
+
+                                dialogNodeModel.effects[m - 1].condition = conditionModel;
+                            }
+                        }
+
                     }
                 }
 

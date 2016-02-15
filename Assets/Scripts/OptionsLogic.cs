@@ -21,7 +21,7 @@ public class OptionsLogic : MonoBehaviour
             () => optionPressed(options[0].nextIndex));
         textChild.GetComponentInChildren<Button>().onClick.AddListener(
             () => Destroy());
-        Text childTextComp = textChild.GetComponentInChildren<Text>();
+        Text childTextComp = textChild.GetComponent<Text>();
         childTextComp.text = "1 - " + options[0].text;
         float prefHeight = childTextComp.preferredHeight;
         Vector3 position = textChild.transform.localPosition;
@@ -44,7 +44,7 @@ public class OptionsLogic : MonoBehaviour
                 () => optionPressed(nextIndex));
             newText.GetComponentInChildren<Button>().onClick.AddListener(
                 () => Destroy());
-            newText.GetComponentInChildren<Text>().text = (i + 1) + " - " + options[i].text;
+            newText.GetComponent<Text>().text = (i + 1) + " - " + options[i].text;
             position.y = position.y - prefHeight;
             newText.transform.localPosition = position;
         }

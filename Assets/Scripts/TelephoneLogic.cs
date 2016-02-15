@@ -25,11 +25,13 @@ public class TelephoneLogic : MonoBehaviour
             if (sourceImage != hablandoTelefono)
             {
                 sourceImage = hablandoTelefono;
+                GetComponent<Image>().overrideSprite = sourceImage;
             }
         }
         else if (sourceImage != telefonoEspera)
         {
             sourceImage = telefonoEspera;
+            GetComponent<Image>().overrideSprite = sourceImage;
         }
 
         bool telEscondido = Flags.ValorDe("TelEscondido");

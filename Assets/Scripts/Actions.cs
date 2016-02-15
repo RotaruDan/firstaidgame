@@ -10,14 +10,13 @@ public class Actions : MonoBehaviour, IPointerClickHandler
 
     private Canvas canvas;
     private Camera cam;
-    private GameObject actionsPrefab, actionsControl;
+    private GameObject actionsControl;
 
     // Use this for initialization
     void Start()
     {
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
-        actionsPrefab = Utils.LoadActionsPrefab(canvas.transform);
 
     }
 
@@ -28,8 +27,7 @@ public class Actions : MonoBehaviour, IPointerClickHandler
             Destroy(actionsControl);
         }
 
-        actionsControl = Instantiate(actionsPrefab);
-        actionsControl.transform.SetParent(canvas.transform);
+        actionsControl = Utils.LoadActionsPrefab(canvas.transform);
 
         ReadActions(xmlActions.text);
 
@@ -65,33 +63,36 @@ public class Actions : MonoBehaviour, IPointerClickHandler
 
             XmlNode condition = actionNode.SelectSingleNode("condition");
 
-            XmlNodeList activeFlags = condition.SelectNodes("active");
-            bool continueLoop = false;
-            for (int j = 0; j < activeFlags.Count; ++j)
+            if (condition != null)
             {
-                if (!Flags.ValorDe(activeFlags[j].Attributes["flag"].Value))
+                XmlNodeList activeFlags = condition.SelectNodes("active");
+                bool continueLoop = false;
+                for (int j = 0; j < activeFlags.Count; ++j)
                 {
-                    continueLoop = true;
-                    break;
+                    if (!Flags.ValorDe(activeFlags[j].Attributes["flag"].Value))
+                    {
+                        continueLoop = true;
+                        break;
+                    }
                 }
-            }
-            if (continueLoop)
-            {
-                continue;
-            }
+                if (continueLoop)
+                {
+                    continue;
+                }
 
-            XmlNodeList inactiveFlags = condition.SelectNodes("inactive");
-            for (int j = 0; j < inactiveFlags.Count; ++j)
-            {
-                if (Flags.ValorDe(inactiveFlags[j].Attributes["flag"].Value))
+                XmlNodeList inactiveFlags = condition.SelectNodes("inactive");
+                for (int j = 0; j < inactiveFlags.Count; ++j)
                 {
-                    continueLoop = true;
-                    break;
+                    if (Flags.ValorDe(inactiveFlags[j].Attributes["flag"].Value))
+                    {
+                        continueLoop = true;
+                        break;
+                    }
                 }
-            }
-            if (continueLoop)
-            {
-                continue;
+                if (continueLoop)
+                {
+                    continue;
+                }
             }
 
             GameObject actionButton = Utils.LoadPrefab(actionsControl.transform, "Action Button");
@@ -150,28 +151,97 @@ public class Actions : MonoBehaviour, IPointerClickHandler
 
             XmlNode node = actionNode.SelectSingleNode("effect");
 
+            XmlNodeList effectsList = node.SelectNodes("*");
 
-            XmlNode triggerScene = node.SelectSingleNode("trigger-scene");
-            if (triggerScene != null)
+            for (int j = 0; j < effectsList.Count; j += 2)
             {
-                customButton.onClick.AddListener(
-                    () => Utils.LoadLevel(triggerScene.Attributes["idTarget"].Value));
-            }
+                XmlNode effectNode = effectsList[j];
 
-            XmlNode speakPlayer = node.SelectSingleNode("speak-player");
-            if (speakPlayer != null)
-            {
-                customButton.onClick.AddListener(
-                    () => Utils.ShowTextBubble(speakPlayer.Value));
-            }
+                string effectNodeName = effectNode.Name;
 
-            XmlNode triggerConv = node.SelectSingleNode("trigger-conversation");
-            if (triggerConv != null)
-            {
-                // TODO trigger conversation fron ID
-                customButton.onClick.AddListener(
-                    () => Conversations.PlayConversation(triggerConv.Attributes["idTarget"].Value));
-            }
+                XmlNode conditionNode = effectsList[j + 1];
+                Conversations.Condition conditionModel = null;
+                XmlNodeList conditions = conditionNode.SelectNodes("*");
+                if (conditions != null && conditions.Count > 0)
+                {
+                    conditionModel = new Conversations.Condition();
+
+                    XmlNodeList activesList = conditionNode.SelectNodes("active");
+                    conditionModel.actives = new string[activesList.Count];
+                    for (int y = 0; y < activesList.Count; y++)
+                    {
+                        conditionModel.actives[y] = activesList[y].Attributes["flag"].Value;
+                    }
+
+                    XmlNodeList inactivesList = conditionNode.SelectNodes("inactive");
+                    conditionModel.inactives = new string[inactivesList.Count];
+                    for (int y = 0; y < inactivesList.Count; y++)
+                    {
+                        conditionModel.inactives[y] = inactivesList[y].Attributes["flag"].Value;
+                    }
+                }
+
+
+                if (effectNodeName == "activate")
+                {
+                    if (conditionModel == null || conditionModel.isTrue())
+                    {
+                        customButton.onClick.AddListener(
+                            () => Flags.Agregar(effectNode.Attributes["flag"].Value, true));
+                    }
+                }
+                else if (effectNodeName == "deactivate")
+                {
+                    if (conditionModel == null || conditionModel.isTrue())
+                    {
+                        customButton.onClick.AddListener(
+                            () => Flags.Agregar(effectNode.Attributes["flag"].Value, false));
+                    }
+                }
+                else if (effectNodeName == "increment")
+                {
+                    if (conditionModel == null || conditionModel.isTrue())
+                    {
+                        customButton.onClick.AddListener(
+                            () => Utils.IncrementFlagValue(effectNode.Attributes["value"].Value,
+                            Utils.IntParseFast(effectNode.Attributes["var"].Value)));
+                    }
+                }
+                else if (effectNodeName == "decrement")
+                {
+                    if (conditionModel == null || conditionModel.isTrue())
+                    {
+                        customButton.onClick.AddListener(
+                            () => Utils.DecrementFlagValue(effectNode.Attributes["value"].Value,
+                            Utils.IntParseFast(effectNode.Attributes["var"].Value)));
+                    }
+                }
+                else if (effectNodeName == "trigger-conversation")
+                {
+                    if (conditionModel == null || conditionModel.isTrue())
+                    {
+                        customButton.onClick.AddListener(
+                            () => Conversations.PlayConversation(effectNode.Attributes["idTarget"].Value));
+                    }
+                }
+                else if (effectNodeName == "trigger-scene")
+                {
+                    if (conditionModel == null || conditionModel.isTrue())
+                    {
+                        customButton.onClick.AddListener(
+                            () => Utils.LoadLevel(effectNode.Attributes["idTarget"].Value));
+                    }
+                }
+                else if (effectNodeName == "speak-player")
+                {
+                    if (conditionModel == null || conditionModel.isTrue())
+                    {
+                        customButton.onClick.AddListener(
+                            () => Utils.ShowTextBubble(effectNode.InnerText.Replace("#O ", "")));
+                    }
+                }
+            }         
+
             customButton.onClick.AddListener(
                     () => Destroy());
         }
