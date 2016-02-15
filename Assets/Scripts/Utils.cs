@@ -69,6 +69,11 @@ public class Utils : MonoBehaviour
         return XML_READER;
     }
 
+    public void PlayConversation(string convId)
+    {
+        Conversations.PlayConversation(convId);
+    }
+
     /**
       Comma Separated Values - in order to be passed from the UI Event Trigger System.
     */

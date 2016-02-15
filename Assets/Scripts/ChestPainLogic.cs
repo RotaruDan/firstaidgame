@@ -20,7 +20,7 @@ public class ChestPainLogic : MonoBehaviour
         backgroundImage.sprite = dolorToracico;
         backgroundImage.overrideSprite = dolorToracico;
 
-        if (Flags.ValorDe("Estimulado"))
+        if (Flags.ValorDe("Sentado"))
         {
             Conversations.PlayConversation("esperarAmbulanciaSentado");
             Invoke("inconsciencia", 3f);

@@ -5,7 +5,8 @@ using UnityEngine.UI;
 public class UnconsciousLogic : MonoBehaviour
 {
     public Sprite sinDesfibrilador, conDesfibrilador, posicionLateral;
-    public TextAsset unconsciousPatient;
+    public TextAsset unconsciousPatient, patientIsBreathing,
+        changePatientPositionAndWaitTheAmbulance, callAmbulance;
 
     private Image backgroundImage;
 
@@ -20,14 +21,86 @@ public class UnconsciousLogic : MonoBehaviour
         backgroundImage.sprite = sinDesfibrilador;
         backgroundImage.overrideSprite = sinDesfibrilador;
 
-        if (Flags.ValorDe("Estimulado"))
+        // Lógica Inconscienia
+        bool comproboRespiracion = Flags.ValorDe("ComproboRespiracion");
+        bool posDeSeguridad = Flags.ValorDe("PosicionDeSeguridad");
+        if (Flags.ValorDe("Estimulado") &&
+            !comproboRespiracion &&
+            !posDeSeguridad)
         {
             Conversations.PlayConversation("estimuloNoFunciona");
         }
         else
         {
-            Invoke("startInitialConversation", 0.5f);
+            if (!comproboRespiracion)
+            {
+                if (!posDeSeguridad)
+                {
+                    Invoke("startInitialConversation", 0.5f);
+                }
+                else
+                {
+                    bool llamo112 = Flags.ValorDe("Llamo112");
+                    if (!llamo112)
+                    {
+                        Utils.ShowTextBubble(callAmbulance.text, () =>
+                        {
+                            Invoke("llegaAmbulancia", 2f);
+                        });
+                    }
+                    else
+                    {
+                        Invoke("llegaAmbulancia", 2f);
+                    }
+                }
+            }
+            else
+            {
+                if (!posDeSeguridad)
+                {
+                    bool respira = Flags.ValorDe("Respira");
+                    if (respira)
+                    {
+                        Utils.ShowTextBubble(patientIsBreathing.text, () =>
+                        {
+                            bool ayuda = Flags.ValorDe("Ayuda");
+                            if (ayuda)
+                            {
+                                Utils.ShowTextBubble(
+                                    changePatientPositionAndWaitTheAmbulance.text, () =>
+                                    {
+                                        // Invoke("llegaAmbulancia", 2f);
+                                    });
+                            }
+                            else
+                            {
+                                // Invoke("llegaAmbulancia", 2f);
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    bool llamo112 = Flags.ValorDe("Llamo112");
+                    if (!llamo112)
+                    {
+                        Utils.ShowTextBubble(callAmbulance.text, () =>
+                        {
+                            Invoke("llegaAmbulancia", 2f);
+                        });
+                    }
+                    else
+                    {
+                        Invoke("llegaAmbulancia", 2f);
+                    }
+                }
+            }
         }
+    }
+
+    public void llegaAmbulancia()
+    {
+        Utils.LoadLevel("Final");
     }
 
     public void startInitialConversation()
